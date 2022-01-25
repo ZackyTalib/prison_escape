@@ -2,7 +2,12 @@ use std::io::stdin;
 
 use crate::lib::characters::Direction;
 
-use super::{characters::{Player, Guard, Character}, grid::{Grid, Position}, square::Square};
+use super::{
+    characters::{Character, Guard, Player},
+    graphics,
+    grid::{Grid, Position},
+    square::Square,
+};
 
 pub struct Game {
     player: Player,
@@ -32,12 +37,11 @@ impl Game {
                 "D" => self.move_player(Direction::Rightward),
                 _ => (),
             }
-            print!("\x1B[2J\x1B[1;1H"); // clear the terminal
             if self.escaped {
-                println!("YOU HAVE ESCAPED");
+                graphics::draw_escaped();
                 break;
             } else {
-                self.draw_grid();
+                graphics::draw_grid(&self.grid, &self.player, &self.guard);
             }
         }
     }
@@ -106,42 +110,5 @@ impl Game {
         if movement_possible {
             self.player.move_character(direction);
         }
-    }
-
-    fn draw_grid(&self) {
-        if self.escaped {
-            println!("YOU HAVE ESCAPED SUCCESSFULLY");
-            return;
-        }
-        let mut grid_str = String::new();
-        for y in 0..self.grid.height {
-            for x in 0..self.grid.width {
-                grid_str += match Position::new(x, y) {
-                    p if p == self.player.position => "\x1b[32m P \x1b[0m".to_string(),
-                    p if p == self.guard.position => "\x1b[34m G \x1b[0m".to_string(),
-                    _ => Self::draw_square(self.grid.get_square(&Position::new(x, y)).unwrap()),
-                }
-                .as_str();
-            }
-            grid_str += "\n";
-        }
-        println!("{}", grid_str);
-    }
-
-    fn draw_square(square: &Square) -> String {
-        let mut wall_count: u8 = 0;
-        if square.wall_state.wall_n {
-            wall_count += 1;
-        }
-        if square.wall_state.wall_s {
-            wall_count += 2;
-        }
-        if square.wall_state.wall_w {
-            wall_count += 3;
-        }
-        if square.wall_state.wall_e {
-            wall_count += 4;
-        }
-        format!(" {} ", wall_count)
     }
 }

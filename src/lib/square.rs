@@ -61,13 +61,11 @@ impl WallState {
 }
 
 pub struct Square {
-    pub(super) wall_state: WallState
+    pub(super) wall_state: WallState,
 }
 
 impl Square {
     pub fn new(wall_state: WallState) -> Self {
-        Self {
-            wall_state,
-        }
+        Self { wall_state }
     }
 }

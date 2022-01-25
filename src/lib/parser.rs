@@ -1,6 +1,6 @@
 use std::{fs::read_to_string, path::Path};
 
-use super::{square::WallState, grid::{Position}};
+use super::{grid::Position, square::WallState};
 
 #[derive(Debug)]
 pub struct GameFile {
@@ -24,7 +24,7 @@ impl GameFile {
             grid_size: Self::get_grid_size(get_declaration_value("grid"))?,
             player_position: Self::get_position(get_declaration_value("player"))?,
             guard_position: Self::get_position(get_declaration_value("guard"))?,
-            custom_squares: Self::get_custom_squares(custom_squares_declarations)?
+            custom_squares: Self::get_custom_squares(custom_squares_declarations)?,
         })
     }
 
